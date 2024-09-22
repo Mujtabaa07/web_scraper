@@ -1,22 +1,5 @@
-# Web Scraper
-
-This project is a simple web scraper that extracts article titles from a news website.
-
-## Requirements
-
-- Python 3.x
-- BeautifulSoup4
-- Requests
-- pyyaml
-
-## Installation
-
-1. Clone the repository.
-2. Navigate to the project directory.
-3. Install the required libraries:
-
-   ```bash
-   pip install -r requirements.txt
-
-# To Run 
-python run_all.py
+beautifulsoup4
+requests
+Flask
+pymongo
+gunicorn

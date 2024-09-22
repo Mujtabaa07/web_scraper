@@ -1,30 +1,27 @@
-import os
-from collections import Counter
-import logging
-import argparse
+from pymongo import MongoClient
 
-# Set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# MongoDB connection
+client = MongoClient('mongodb://localhost:27017/')
+db = client['article_db']
+collection = db['article_titles']
 
-# Set up command-line arguments
-parser = argparse.ArgumentParser(description='Analyze word frequency in article titles.')
-parser.add_argument('input_file', type=str, help='The input file with article titles')
-args = parser.parse_args()
+def analyze_titles():
+    titles = list(collection.find({}, {'_id': 0}))
+    word_count = {}
+    
+    for title in titles:
+        words = title['title'].split()
+        for word in words:
+            word = word.lower()
+            if word in word_count:
+                word_count[word] += 1
+            else:
+                word_count[word] = 1
+    
+    sorted_word_count = sorted(word_count.items(), key=lambda item: item[1], reverse=True)
+    return sorted_word_count
 
-# Check if the input file exists
-if not os.path.exists(args.input_file):
-    logging.error(f"Input file {args.input_file} does not exist.")
-    exit(1)
-
-# Load the titles from the file
-with open(args.input_file, 'r') as file:
-    data = file.read()
-
-# Split the titles into words and count word occurrences
-words = data.split()
-word_count = Counter(words)
-
-# Print the most common words
-logging.info("Most common words in article titles:")
-for word, count in word_count.most_common(10):
-    logging.info(f"{word}: {count}")
+if __name__ == '__main__':
+    analysis = analyze_titles()
+    for word, count in analysis:
+        print(f"{word}: {count}")
